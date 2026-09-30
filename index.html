@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pesan baru</title>
+<style>
+:root{
+  --bg:#f1e7de; --bar:#faf4ee; --in:#ffffff; --out:#f6d5d0; --ink:#2a2124; --soft:#8b7c80; --line:#e3d4cb; --acc:#c4574a; --dot:#43b26b;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#171213; --bar:#211a1c; --in:#2a2224; --out:#5a2f33; --ink:#f1e6e4; --soft:#a5908f; --line:#332a2c; --acc:#e58a7d;}
+}
+:root[data-theme="dark"]{--bg:#171213; --bar:#211a1c; --in:#2a2224; --out:#5a2f33; --ink:#f1e6e4; --soft:#a5908f; --line:#332a2c; --acc:#e58a7d;}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;display:flex;justify-content:center;overflow:hidden}
+canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+#c1{z-index:0}#c2{z-index:20}
+.app{position:relative;z-index:1;width:100%;max-width:480px;height:100%;display:flex;flex-direction:column;opacity:0;transform:scale(.97);transition:opacity .7s ease,transform .7s ease}
+.app.on{opacity:1;transform:none}
+.top{background:var(--bar);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.av{position:relative;width:42px;height:42px;border-radius:50%;background:var(--out);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:var(--acc);box-shadow:0 0 0 2px var(--bar),0 0 0 4px var(--acc)}
+.av{cursor:pointer;background-size:cover;background-position:center}
+.av.foto{color:transparent}
+.na{display:flex;align-items:center;gap:7px}
+.mini{width:20px;height:20px;border-radius:50%;background:#f6d5d0 center/cover;display:inline-block}
+.av::after{content:"";position:absolute;right:-1px;bottom:-1px;width:11px;height:11px;border-radius:50%;background:var(--dot);border:2px solid var(--bar)}
+.nm{font-weight:700;font-size:16px;line-height:1.2}
+.st{font-size:12.5px;color:var(--soft);height:15px;transition:color .3s}
+.chat{flex:1;overflow-y:auto;padding:18px 14px;display:flex;flex-direction:column;gap:7px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Ctext x='14' y='36' font-size='16' fill='%23c4574a' opacity='.10'%3E%E2%99%A5%3C/text%3E%3Ctext x='88' y='58' font-size='11' fill='%23c4574a' opacity='.09'%3E%E2%9C%A6%3C/text%3E%3Ctext x='46' y='112' font-size='12' fill='%23c4574a' opacity='.09'%3E%E2%99%A5%3C/text%3E%3Ctext x='112' y='124' font-size='9' fill='%23c4574a' opacity='.08'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E")}
+.tgl{align-self:center;font-size:12px;color:var(--soft);background:var(--bar);padding:3px 12px;border-radius:10px;margin:2px 0 8px}
+.b{position:relative;max-width:80%;padding:9px 12px;border-radius:14px;font-size:16px;line-height:1.42;box-shadow:0 1px 2px rgba(0,0,0,.1);animation:pop .3s cubic-bezier(.2,.9,.3,1.3)}
+.b.in{align-self:flex-start;background:var(--in);border-top-left-radius:2px}
+.b.in::before{content:"";position:absolute;top:0;left:-7px;border-top:9px solid var(--in);border-left:8px solid transparent}
+.b.out{align-self:flex-end;background:var(--out);border-top-right-radius:2px;transform-origin:right bottom}
+.b.out::before{content:"";position:absolute;top:0;right:-7px;border-top:9px solid var(--out);border-right:8px solid transparent}
+.jam{display:block;text-align:right;font-size:11px;color:var(--soft);margin-top:3px}
+.tk{color:#3b9be0;margin-left:3px;letter-spacing:-2px}
+.ty{align-self:flex-start;background:var(--in);padding:12px 14px;border-radius:14px;border-top-left-radius:2px;display:flex;gap:4px;box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.ty i{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:k 1s infinite}
+.ty i:nth-child(2){animation-delay:.15s}.ty i:nth-child(3){animation-delay:.3s}
+@keyframes k{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-4px)}}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.92)}to{opacity:1;transform:none}}
+.bawah{background:var(--bar);border-top:1px solid var(--line);padding:10px 12px;display:flex;flex-direction:column;gap:8px;min-height:66px}
+.bawah button{font:inherit;font-size:15.5px;padding:12px 16px;border-radius:22px;border:1.5px solid var(--acc);background:transparent;color:var(--ink);cursor:pointer;text-align:left;animation:pop .4s ease both}
+.bawah button:nth-child(2){animation-delay:.12s}
+.bawah button:active{background:var(--out)}
+.bawah .info{font-size:13px;color:var(--soft);text-align:center;padding:12px 0}
+
+/* layar kunci */
+#intro{position:fixed;inset:0;z-index:30;background:radial-gradient(120% 80% at 50% 0%,#4a2a30 0%,#1b1013 60%,#0d0708 100%);color:#fff;display:flex;flex-direction:column;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 12vh) 20px 20px;cursor:pointer;transition:opacity .6s ease,transform .6s ease}
+#intro.off{opacity:0;transform:scale(1.04);pointer-events:none}
+#tgl2{font-size:16px;opacity:.75}
+#jam2{font-size:78px;font-weight:300;line-height:1.1;letter-spacing:-2px}
+.notif{margin-top:auto;margin-bottom:8vh;width:100%;max-width:400px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:18px;padding:13px 15px;animation:turun 1s .5s cubic-bezier(.2,.9,.3,1.2) both}
+.notif .a{display:flex;justify-content:space-between;font-size:12.5px;opacity:.8;margin-bottom:4px}
+.notif .b2{font-size:15.5px;line-height:1.35}
+.tap{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);font-size:13px;opacity:.5;animation:kedip 2s infinite}
+@keyframes turun{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+@keyframes kedip{50%{opacity:.15}}
+</style>
+</head>
+<body>
+<canvas id="c1"></canvas>
+<div class="app" id="app">
+  <div class="top">
+    <div class="av" id="av"></div>
+    <div><div class="nm" id="nm"></div><div class="st" id="st">online</div></div>
+  </div>
+  <div class="chat" id="chat"><div class="tgl">Hari ini</div></div>
+  <div class="bawah" id="bawah"><div class="info">kakak ngga harus bales sekarang</div></div>
+</div>
+<canvas id="c2"></canvas>
+
+<div id="intro">
+  <div id="tgl2"></div>
+  <div id="jam2"></div>
+  <div class="notif"><div class="a"><span class="na"><i class="mini" id="mini"></i><span id="np"></span></span><span>sekarang</span></div><div class="b2" id="nt"></div></div>
+  <div class="tap">ketuk untuk buka</div>
+</div>
+
+<script>
+// Ganti bagian ini biar jadi tulisanmu sendiri
+var PENGIRIM = "zizi";
+var NOTIF = "Ada yang mau aku bilang ke kk...";
+// Foto profil permanen: tempel data gambar (data:image/jpeg;base64,...) di sini.
+// Atau ketuk foto profil di halaman buat pilih dari galeri (tersimpan di perangkat ini aja).
+var FOTO = "zizi.jpg";
+var PESAN = [
+"Kak, maaf ya soal kemarin. Aku udah baca lagi semua chat kk.",
+  "Sekarang aku ngerti kenapa kakak kesel sama aku.",
+  "Aku sadar aku terlalu ngambek cuma gara-gara kakak waktu itu lagi main tapi ngga bilang ke aku.",
+  "Padahal bener kata kakak, selama ini kakak juga sering ngabarin aku kalau lagi makan, nonton, atau main.",
+  "Aku ngga bermaksud bikin kk ngerasa seolaholah kakak ngga pernah ngabarin aku.",
+  "Aku juga ngerti kk capek HP kakak lemot." ,
+  "Maaf ya kalau sikap aku kemarin malah bikin kakak tambah capek dan ngerasa aku ribet.",
+  "Aku cuma terlalu kepikiran waktu itu, tapi cara aku nyampeinnya memang salah.",
+  "Aku bakal coba lebih ngerti keadaan kakak dan ngga gampang ngambek lagi kalau kakak lupa ngabarin.",
+  "Aku ngga mau masalah kecil kayak gini bikin kita jadi ngga enak.",
+  "Maaf ya kak, aku beneran minta maaf."
+];
+var PILIHAN = [
+  {t: "Iya, aku maafin",
+    r: [
+      "Makasih ya kk, serius.",
+      "Aku bakal lebih ngerti lagi setelah ini dan ngga ngulangin hal yang sama.",
+      "aku mau balik lagi kaya dulu "
+    ],
+    love: true
+  },
+  {
+    t: "Aku masih kesel",
+    r: [
+      "oke kk, aku ngerti.",
+      "Aku ngga bakal maksa kk buat langsung maafin aku.",
+      "Aku cuma pengen kk tahu kalau aku beneran nyesel dan minta maaf."] }
+];
+
+var $ = function(id){ return document.getElementById(id); };
+var chat = $("chat"), st = $("st"), bawah = $("bawah");
+$("nm").textContent = PENGIRIM; $("av").textContent = PENGIRIM.charAt(0).toUpperCase();
+$("np").textContent = PENGIRIM; $("nt").textContent = NOTIF;
+function pasangFoto(src){
+  if (!src) return;
+  var u = 'url("' + src + '")';
+  $("av").style.backgroundImage = u; $("av").classList.add("foto"); $("av").textContent = "";
+  $("mini").style.backgroundImage = u;
+}
+var tersimpan = ""; try { tersimpan = localStorage.getItem("foto-profil") || ""; } catch(e){}
+pasangFoto(FOTO || tersimpan);
+var pilih = document.createElement("input"); pilih.type = "file"; pilih.accept = "image/*"; pilih.style.display = "none";
+document.body.appendChild(pilih);
+$("av").addEventListener("click", function(){ pilih.click(); });
+pilih.addEventListener("change", function(){
+  var f = pilih.files && pilih.files[0]; if (!f) return;
+  var r = new FileReader();
+  r.onload = function(){
+    var im = new Image();
+    im.onload = function(){
+      var s = 200, c = document.createElement("canvas"); c.width = c.height = s;
+      var m = Math.min(im.width, im.height), sx = (im.width-m)/2, sy = (im.height-m)/2;
+      c.getContext("2d").drawImage(im, sx, sy, m, m, 0, 0, s, s);
+      var d = c.toDataURL("image/jpeg", .85);
+      pasangFoto(d);
+      try { localStorage.setItem("foto-profil", d); } catch(e){}
+    };
+    im.src = r.result;
+  };
+  r.readAsDataURL(f);
+});
+function pad(n){ return ("0"+n).slice(-2); }
+function jam(){ var d = new Date(); return pad(d.getHours())+"."+pad(d.getMinutes()); }
+var HARI = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"], BLN = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+(function(){ var d = new Date(); $("tgl2").textContent = HARI[d.getDay()]+", "+d.getDate()+" "+BLN[d.getMonth()]; $("jam2").textContent = pad(d.getHours())+":"+pad(d.getMinutes()); })();
+
+/* kanvas: kelopak melayang + ledakan hati */
+var c1 = $("c1"), x1 = c1.getContext("2d"), c2 = $("c2"), x2 = c2.getContext("2d"), W, H, dpr = window.devicePixelRatio || 1;
+function ukuran(){ W = innerWidth; H = innerHeight; [c1,c2].forEach(function(c){ c.width = W*dpr; c.height = H*dpr; c.getContext("2d").setTransform(dpr,0,0,dpr,0,0); }); }
+ukuran(); addEventListener("resize", ukuran);
+var petal = [];
+for (var i = 0; i < 16; i++) petal.push({x:Math.random()*W, y:Math.random()*H, r:5+Math.random()*7, v:.25+Math.random()*.5, rot:Math.random()*6, vr:(Math.random()-.5)*.02, ph:Math.random()*6, a:.18+Math.random()*.22});
+function frame(){
+  x1.clearRect(0,0,W,H);
+  petal.forEach(function(p){
+    p.y += p.v; p.ph += .012; p.x += Math.sin(p.ph)*.5; p.rot += p.vr;
+    if (p.y > H+20){ p.y = -20; p.x = Math.random()*W; }
+    x1.save(); x1.translate(p.x,p.y); x1.rotate(p.rot); x1.globalAlpha = p.a; x1.fillStyle = "#e0707a";
+    x1.beginPath(); x1.ellipse(0,0,p.r,p.r*.55,0,0,7); x1.fill(); x1.restore();
+  });
+  requestAnimationFrame(frame);
+}
+frame();
+var hati = [], jalan = false;
+function ledak(){
+  var cols = ["#e0707a","#f19a9a","#c4574a","#f6c1b8","#ffffff"];
+  for (var i = 0; i < 70; i++){ var a = -Math.PI/2 + (Math.random()-.5)*1.9, s = 6+Math.random()*9;
+    hati.push({x:W/2, y:H*.8, vx:Math.cos(a)*s, vy:Math.sin(a)*s, sz:14+Math.random()*22, c:cols[i%cols.length], l:1}); }
+  if (!jalan){ jalan = true; anim(); }
+}
+function anim(){
+  x2.clearRect(0,0,W,H);
+  hati = hati.filter(function(h){ return h.l > 0; });
+  hati.forEach(function(h){ h.x += h.vx; h.y += h.vy; h.vy += .28; h.vx *= .99; h.l -= .008;
+    x2.globalAlpha = Math.max(h.l,0); x2.fillStyle = h.c; x2.font = h.sz+"px sans-serif"; x2.fillText("\u2665", h.x, h.y); });
+  x2.globalAlpha = 1;
+  if (hati.length) requestAnimationFrame(anim); else jalan = false;
+}
+
+/* chat */
+function gulir(){ chat.scrollTop = chat.scrollHeight; }
+function bubble(t, tipe){
+  var d = document.createElement("div"); d.className = "b "+tipe;
+  d.appendChild(document.createTextNode(t));
+  var j = document.createElement("span"); j.className = "jam"; j.textContent = jam();
+  if (tipe === "out"){ var k = document.createElement("span"); k.className = "tk"; k.textContent = "\u2713\u2713"; j.appendChild(k); }
+  d.appendChild(j); chat.appendChild(d); gulir();
+}
+function ketik(ms, cb){
+  var t = document.createElement("div"); t.className = "ty"; t.innerHTML = "<i></i><i></i><i></i>";
+  chat.appendChild(t); gulir(); st.textContent = "mengetik..."; st.style.color = "var(--acc)";
+  setTimeout(function(){ chat.removeChild(t); st.textContent = "online"; st.style.color = ""; cb(); }, ms);
+}
+function urut(arr, done){
+  var n = 0;
+  (function langkah(){
+    if (n >= arr.length){ if (done) done(); return; }
+    var teks = arr[n++];
+    ketik(Math.min(700 + teks.length*24, 2400), function(){ bubble(teks, "in"); setTimeout(langkah, 550); });
+  })();
+}
+function mulai(){
+  $("app").classList.add("on");
+  setTimeout(function(){
+    urut(PESAN, function(){
+      bawah.innerHTML = "";
+      PILIHAN.forEach(function(p){
+        var b = document.createElement("button"); b.textContent = p.t;
+        b.addEventListener("click", function(){
+          bawah.innerHTML = '<div class="info">&nbsp;</div>';
+          bubble(p.t, "out");
+          if (p.love) setTimeout(ledak, 350);
+          setTimeout(function(){ urut(p.r); }, 900);
+        });
+        bawah.appendChild(b);
+      });
+    });
+  }, 900);
+}
+$("intro").addEventListener("click", function(){ this.classList.add("off"); mulai(); });
+</script>
+</body>
+</html>
